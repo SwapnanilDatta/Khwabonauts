@@ -417,7 +417,7 @@
         }
 
         .circle {
-          --circle-size: 40px;
+          --circle-size: 30px;
           position: fixed;
           height: var(--circle-size);
           width: var(--circle-size);
@@ -426,6 +426,8 @@
           top: calc(var(--circle-size) / 2 * -1);
           left: calc(var(--circle-size) / 2 * -1);
           pointer-events: none;
+          background-color: white;
+          /* backdrop-filter: blur(100px); */
 }
     
     </style>
