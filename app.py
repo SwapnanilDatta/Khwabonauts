@@ -13,7 +13,7 @@ scaler = joblib.load('scaler.pkl')
 label_encoder = joblib.load('label_encoder.pkl')
 
 # SQLite database file name
-DB_FILE = 'organ_donation.db'
+DB_FILE = '/home/nil123/organ_donation.db'
 
 
 
