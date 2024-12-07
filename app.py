@@ -159,28 +159,28 @@ def match(recipient_id):
 
         # Prepare input for the model
 # Calculate compatibility
-    input_data = pd.DataFrame([{
+        input_data = pd.DataFrame([{
         'age_similarity': 1 / (1 + abs(donor_data['age'] - recipient_data['age'])),
         'distance_score': 1 / (1 + location_distance),
         'urgency_level': recipient_data['urgency_score']
-    }])
+        }])
 
 # Scale the input data
-    input_data_scaled = scaler.transform(input_data)
+        input_data_scaled = scaler.transform(input_data)
 
 # Predict compatibility score
-    compatibility_score = model.predict(input_data_scaled)[0]
+        compatibility_score = model.predict(input_data_scaled)[0]
 
 
         # Append result
-    results.append({
+        results.append({
             'donor_id': donor_data['donor_id'],
             'donor_name': donor_data['full_name'],
             'organ': donor_data['organ'],
             'distance': round(location_distance, 2),
             'urgency_score': recipient_data['urgency_score'],
             'compatibility_score': round(compatibility_score, 2)
-        })
+            })
 
     # Sort and filter
     
