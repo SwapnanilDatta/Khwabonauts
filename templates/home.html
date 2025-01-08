@@ -233,7 +233,7 @@
     /* text-stroke: 2px #64ffda; */
 } 
 
-        p {
+p {
             color: #b1b3b8;
             font-size: 1.15rem;
             font-weight: 200;
@@ -241,54 +241,73 @@
             margin-bottom: 1.6rem;
             line-height: 1.6;
         }
+          .feedback-section {
+              height: 400px;
+              perspective: 1200px;
+              position: relative;
+              width: 100%;
+              max-width: 800px;
+              margin: 0 auto;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+          }
 
-        .feedback-section {
-            overflow: hidden; /* Hide overflow */
-            position: relative; /* Position relative for absolute children */
-            width: 100%; /* Full width */
-        }
+          .feedback-section {
+              height: 600px;
+              perspective: 1500px;
+              position: relative;
+              width: 100%;
+              max-width: 1000px;
+              margin: 0 auto;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+          }
 
-        .feedback-container {
-            display: flex; /* Flexbox for horizontal alignment */
-            animation: scrollFeedbacks 15s linear infinite; /* Animation for scrolling */
-        }
+          .feedback-container {
+              position: relative;
+              width: 100%;
+              height: 100%;
+              transform-style: preserve-3d;
+          }
 
-        .feedback-box {
-    flex: 0 0 auto;
-    width: 300px;
-    background: rgba(17, 34, 64, 0.4); /* Semi-transparent background */
-    backdrop-filter: blur(15px); /* Glassmorphism effect */
-    border: 1px solid rgba(100, 255, 218, 0.2); /* Subtle border */
-    padding: 1.5rem;
-    border-radius: 12px;
-    min-height: 200px;
-    text-align: center;
-    box-shadow: 
-        0 8px 32px rgba(0, 0, 0, 0.2), /* Soft shadow */
-        0 0 20px rgba(100, 255, 218, 0.3); /* Glow effect */
-    margin-right: 20px;
-    color: #8892b0;
-    transition: all 0.3s ease;
-}
+          .feedback-box {
+              position: absolute;
+              width: 400px;
+              left: 50%;
+              top: 50%;
+              background: rgba(17, 34, 64, 0.4);
+              backdrop-filter: blur(15px);
+              border: 1px solid rgba(100, 255, 218, 0.2);
+              padding: 1.5rem;
+              border-radius: 12px;
+              text-align: center;
+              transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+              transform-origin: center;
+          }
+          .feedback-box.active {
+              opacity: 1;
+              transform: translate(-50%, -50%) translateZ(200px);
+          }
 
-.feedback-box:hover {
-    background: rgba(17, 34, 64, 0.5); /* Slightly more transparent on hover */
-    box-shadow: 
-        0 10px 40px rgba(0, 0, 0, 0.3), /* Enhanced shadow */
-        0 0 30px rgba(100, 255, 218, 0.5); /* Brighter glow on hover */
-    transform: scale(1.02); /* Slight scale effect on hover */
-}
+          .feedback-box.prev {
+              opacity: 0.7;
+              transform: translate(-50%, -50%) translateZ(0) translateY(-100px);
+          }
 
-/* Continuous scrolling animation */
-@keyframes scrollFeedbacks {
-    0% {
-        transform: translateX(0); /* Start position */
-    }
-    100% {
-        transform: translateX(-100%); /* End position (fully scrolled) */
-    }
-}
+          .feedback-box.next {
+              opacity: 0.7;
+              transform: translate(-50%, -50%) translateZ(0) translateY(100px);
+          }
 
+          .feedback-box:hover {
+              background: rgba(17, 34, 64, 0.5);
+              box-shadow: 
+                  0 10px 40px rgba(0, 0, 0, 0.3),
+                  0 0 30px rgba(100, 255, 218, 0.5);
+              transform: scale(1.02);
+          }
 
 
         /* For better mobile experience */
@@ -417,7 +436,7 @@
         }
 
         .circle {
-          --circle-size: 30px;
+          --circle-size: 15px;
           position: fixed;
           height: var(--circle-size);
           width: var(--circle-size);
@@ -690,6 +709,43 @@ const tick = () => {
 
 // Start the animation loop
 tick();
+    </script>
+    <script>
+        const boxes = document.querySelectorAll('.feedback-box');
+        let currentIndex = 0;
+    
+        function updateCarousel() {
+            const ellipseX = 300; // horizontal radius
+            const ellipseY = 150; // vertical radius
+            const depth = 400;    // z-axis depth
+        
+            boxes.forEach((box, index) => {
+                const angle = ((index - currentIndex) * 2 * Math.PI) / boxes.length;
+            
+                // Calculate position on elliptical path
+                const x = ellipseX * Math.cos(angle);
+                const y = ellipseY * Math.sin(angle);
+                const z = depth * Math.cos(angle);
+            
+                // Calculate scale based on z position
+                const scale = mapRange(z, -depth, depth, 0.6, 1);
+                const opacity = mapRange(z, -depth, depth, 0.4, 1);
+            
+                box.style.transform = `translate(-50%, -50%) 
+                                   translate3d(${x}px, ${y}px, ${z}px) 
+                                   scale(${scale})`;
+                box.style.opacity = opacity;
+            });
+        
+            currentIndex = (currentIndex + 1) % boxes.length;
+        }
+    
+        function mapRange(value, in_min, in_max, out_min, out_max) {
+            return (value - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+        }
+    
+        updateCarousel();
+        setInterval(updateCarousel, 3000);
     </script>
 </body>
 </html>
