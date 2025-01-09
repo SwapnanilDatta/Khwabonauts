@@ -240,20 +240,69 @@ p {
             font-style: italic;
             margin-bottom: 1.6rem;
             line-height: 1.6;
-        }
-          .feedback-section {
-              height: 400px;
-              perspective: 1200px;
-              position: relative;
-              width: 100%;
-              max-width: 800px;
-              margin: 0 auto;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-          }
+      }
 
-          .feedback-section {
+      .feedback-heading {
+  font-size: 2rem;
+  text-align: center;
+  margin: 6rem auto 4rem;
+  position: relative;
+  max-width: 800px;
+  padding: 0 2rem;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.feedback-heading h2 {
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -1px;
+  background: linear-gradient(to right, #64ffda, #a8fff1);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 2px 2px 20px rgba(100, 255, 218, 0.2);
+  position: relative;
+  z-index: 3;
+}
+
+.feedback-heading::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: #64ffda;
+  border-radius: 2px;
+  box-shadow: 0 0 15px rgba(100, 255, 218, 0.6);
+}
+
+.feedback-heading.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Add hover animation */
+.feedback-heading:hover h2 {
+  text-shadow: 0 0 30px rgba(100, 255, 218, 0.8);
+  transform: scale(1.02);
+  transition: all 0.3s ease;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .feedback-heading {
+      font-size: 2.2rem;
+      margin: 4rem auto 3rem;
+  }
+    
+  .feedback-heading::after {
+      width: 40px;
+  }
+}          .feedback-section {
               height: 600px;
               perspective: 1500px;
               position: relative;
@@ -302,7 +351,7 @@ p {
           }
 
           .feedback-box:hover {
-              background: rgba(17, 34, 64, 0.5);
+              background: rgba(17, 34, 64, 0);
               box-shadow: 
                   0 10px 40px rgba(0, 0, 0, 0.3),
                   0 0 30px rgba(100, 255, 218, 0.5);
@@ -454,19 +503,21 @@ p {
 <body>
   <div class="circle"></div>
     <div id="canvas-container">
-        <video autoplay loop muted playsinline>
-            <source src="{{ url_for('static', filename='videos/bgvideo.mp4') }}" type="video/mp4">
+        <video autoplay loop muted playsinline preload="auto">
+            <source src="path/to/your/video/bgvideo.mp4" type="video/mp4">
             Your browser does not support the video tag.
         </video>
     </div>
+
+
     
-    <div id="canvas-container"></div>
     
     <nav>
         <div class="logo">LifeLink</div>
         <div class="nav-links">
            
-            <button class="nav-btn login-btn" onclick="window.location.href='/form'">Get Started</button>
+              <button class="nav-btn login-btn" onclick="window.location.href='/login'">Log In</button>
+        <button class="nav-btn get-started-btn" onclick="window.location.href='/register'">Register</button>
         </div>
     </nav>
 
@@ -479,24 +530,31 @@ p {
                 
               </div>
             </div>
-            
-            <div class="stats">
-                <div class="stat-item">
-                    <div class="stat-number" data-target="1000">0</div>
-                    <div class="stat-label">Successful Matches</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" data-target="500">0</div>
-                    <div class="stat-label">Partner Hospitals</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number" data-target="98">0</div>
-                    <div class="stat-label">Success Rate</div>
-                </div>
-            </div>
-        </div>
+                          <div class="stats">
+                              <div class="stat-item">
+                                  <div class="stat-number" data-target="1000" data-suffix="+">0</div>
+                                  <div class="stat-label">Successful Matches</div>
+                              </div>
+                              <div class="stat-item">
+                                  <div class="stat-number" data-target="500" data-suffix="+">0</div>
+                                  <div class="stat-label">Partner Hospitals</div>
+                              </div>
+                              <div class="stat-item">
+                                  <div class="stat-number" data-target="98" data-suffix="%">0</div>
+                                  <div class="stat-label">Success Rate</div>
+                              </div>
+                          </div>
+                      </div>
     </section>
-
+    <div class="feedback-heading">
+        <h2>What People Say About Us</h2>
+        <div class="aurora">
+          <div class="aurora__item"></div>
+          <div class="aurora__item"></div>
+          <div class="aurora__item"></div>
+          <div class="aurora__item"></div>
+        </div>
+      </div>
    <!-- Feedback Section -->
    <div class="feedback-section">
     <div class="feedback-container">
@@ -615,20 +673,20 @@ p {
         animate();
 
         function animateCount(element, target, duration) {
-        let start = 0; // Start value
-        let increment = target / (duration / 20); // Step increment based on duration
+            let start = 0;
+            let increment = target / (duration / 20);
+            const suffix = element.getAttribute('data-suffix') || ''; // Get suffix if specified
 
-        const count = setInterval(() => {
-            start += increment; 
-            if (start >= target) {
-                element.textContent = Math.round(target); // Set final value
-                clearInterval(count); // Stop the interval
-            } else {
-                element.textContent = Math.round(start); // Update value
-            }
-        }, 20); // Update every 20ms
-    }
-
+            const count = setInterval(() => {
+                start += increment;
+                if (start >= target) {
+                    element.textContent = Math.round(target) + suffix; // Add suffix to final value
+                    clearInterval(count);
+                } else {
+                    element.textContent = Math.round(start) + suffix; // Add suffix during animation
+                }
+            }, 20);
+        }
     // Initialize the counting effect for each stat number
     document.querySelectorAll('.stat-number').forEach((stat) => {
         const target = +stat.getAttribute('data-target'); // Get target value
@@ -705,7 +763,23 @@ const tick = () => {
 
   // Request the next frame to continue the animation
   window.requestAnimationFrame(tick);
+
+
 }
+const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, {
+      threshold: 0.25,
+      rootMargin: '50px 0px'
+    });
+
+    document.querySelector('.feedback-heading').classList.remove('visible');
+    observer.observe(document.querySelector('.feedback-heading'));
 
 // Start the animation loop
 tick();
@@ -746,6 +820,8 @@ tick();
     
         updateCarousel();
         setInterval(updateCarousel, 3000);
+
+
     </script>
 </body>
 </html>
